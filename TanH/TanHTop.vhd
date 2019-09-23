@@ -8,9 +8,9 @@ entity TanHTop is
 	fractional_bits : integer := 12
 	);
   port (
-   valid_in : in std_logic;
+    valid_in : in std_logic;
 	valid_out : out std_logic;
-   input  : in signed((bit_width - 1) downto 0);
+    input  : in signed((bit_width - 1) downto 0);
 	output : out signed((bit_width - 1) downto 0);
 	clk    : in std_logic
 	);
@@ -28,15 +28,15 @@ architecture behavioural of TanHTop is
 	   fractional_bits : integer := 12
 	 );
     port (
-      --valid_in
+       --valid_in
 	   --valid_out
-      input  : in signed((bit_width - 1) downto 0);
+       input  : in signed((bit_width - 1) downto 0);
 	   output : out signed((bit_width - 1) downto 0);
 	   clk    : in std_logic
 	  );
   end component;
 begin
-  u1: entity work.tanh(PLAN_TANH) generic map(bit_width => bit_width, fractional_bits => fractional_bits)
+  u1: entity work.tanh(PLATANH) generic map(bit_width => bit_width, fractional_bits => fractional_bits)
               port map(input => input_reg, output => output_next, clk => clk);          
 
   input_next <= input;
