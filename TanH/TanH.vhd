@@ -12,7 +12,7 @@ entity TanH is
 	);
   port (
     valid_in : in std_logic;
-	valid_out : out std_logic
+	valid_out : out std_logic;
     input : in signed((bit_width - 1) downto 0);
 	output : out signed((bit_width - 1) downto 0);
 	clk : in std_logic
