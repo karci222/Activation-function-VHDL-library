@@ -36,11 +36,12 @@ architecture behavioural of TanHTop is
 	  );
   end component;
 begin
-  u1: entity work.tanh(PLATANH_PIPELINED) generic map(bit_width => bit_width, fractional_bits => fractional_bits)
-              port map(input => input_reg, output => output_next, clk => clk, valid_in => valid_in_reg, valid_out => valid_out_next);          
+  u1: entity work.tanh(PLATANH) generic map(bit_width => bit_width, fractional_bits => fractional_bits)
+              port map(input => input_reg, output => output_next, clk => clk, valid_in => valid_in, valid_out => valid_out);          
 
   input_next <= input;
   valid_in_next <= valid_in;
+  valid_out_next <= valid_in_reg;
   
   
   seq: process(clk)
