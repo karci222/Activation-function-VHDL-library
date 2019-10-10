@@ -88,12 +88,15 @@ architecture PLAN_PIPELINED of sigmoid is
   signal x, x_abs, x_shift_1, x_shift_2, x_shift_3, op_1, op_2, res, res_neg: signed((bit_width - 1) downto 0);
   signal sel: std_logic_vector(1 downto 0);
   signal op_1_reg, op_2_reg, op_1_next, op_2_next: signed((bit_width - 1) downto 0);
-  signal valid_out_reg, valid_out_next: std_logic;
+  signal valid_out_reg, valid_out_next, x_neg_next, x_neg_reg, x_max_next, x_max_reg: std_logic;
 begin
   x <= input;
   x_abs <= abs(input);
   valid_out_next <= valid_in;
   valid_out <= valid_out_reg;
+  x_neg_next <= x(bit_width-1) ;
+  x_max_next <= '1' when x = max_neg else
+                '0';
   
   sel <= "00" when x_abs >= cond1 else	
 		 "01" when x_abs >= cond2 else 
@@ -118,11 +121,11 @@ begin
   op_1_next <= op_1;
   op_2_next <= op_2;
   
-  res     <= op_1 + op_2;
+  res     <= op_1_reg + op_2_reg;
   res_neg <= one - res;
   
   output <= (others => '0') when (x = max_neg) else
-			res_neg when x(bit_width-1) = '1'else
+			res_neg when x_neg_reg= '1'else
 			res;
 			
   seq: process(clk)
@@ -130,7 +133,9 @@ begin
      if rising_edge(clk) then
 	    valid_out_reg <= valid_out_next;
 		op_1_reg <= op_1_next;
-		op_2_reg <= op_2_reg;
+		op_2_reg <= op_2_next;
+		x_neg_reg <= x_neg_next;
+		x_max_reg <= x_max_next;
 	 end if;
   end process;
 end PLAN_PIPELINED;

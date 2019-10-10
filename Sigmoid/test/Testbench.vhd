@@ -36,7 +36,7 @@ architecture test_plan of testebench is
   signal input_internal_2, output_internal: signed((bit_width - 1) downto 0);
   signal clk_internal : std_logic;
 begin
-  u1: entity work.tanh(PLATANH) generic map(bit_width => bit_width, fractional_bits => fractional_bits)
+  u1: entity work.sigmoid(PLAN) generic map(bit_width => bit_width, fractional_bits => fractional_bits)
 			port map(input => input_internal_2, output => output_internal, clk => clk_internal, valid_in => '1', valid_out => open);
   u2: entity work.env(behaviour_non_pipelined) generic map(bit_width => bit_width)
 		port map(input => input_internal, res => res_internal, clk => clk_internal);
@@ -74,7 +74,7 @@ architecture test_plan_pipelined of testebench is
   signal input_internal_2, output_internal: signed((bit_width - 1) downto 0);
   signal clk_internal : std_logic;
 begin
-  u1: entity work.tanh(PLATANH_PIPELINED) generic map(bit_width => bit_width, fractional_bits => fractional_bits)
+  u1: entity work.sigmoid(PLAN_PIPELINED) generic map(bit_width => bit_width, fractional_bits => fractional_bits)
 			port map(input => input_internal_2, output => output_internal, clk => clk_internal, valid_in => '1', valid_out => open);
   u2: entity work.env(behaviour_pipelined) generic map(bit_width => bit_width)
 		port map(input => input_internal, res => res_internal, clk => clk_internal);

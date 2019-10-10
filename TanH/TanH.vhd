@@ -20,6 +20,7 @@ end TanH;
 
 architecture PLATANH of TanH is
   constant max_neg : signed((bit_width-1) downto 0) := to_signed(integer(-2**(bit_width-1)), bit_width);
+  constant neg_one : signed((bit_width-1) downto 0) := to_signed(integer(-1.0*2**(fractional_bits)), bit_width);
   
   constant a : signed((bit_width-1) downto 0) := to_signed(integer(5.5799959*(2**fractional_bits)), bit_width);
   constant b : signed((bit_width-1) downto 0) := to_signed(integer(3.02*(2**fractional_bits)), bit_width);
@@ -77,7 +78,7 @@ begin
   res     <= op_1 + op_2;
   res_neg <= -res;
   
-  output <= (others => '0') when (x = max_neg) else
+  output <= neg_one when (x = max_neg) else
 			res_neg when x(bit_width-1) = '1'else
 			res;
 			
@@ -86,6 +87,7 @@ end PLATANH;
 
 architecture PLATANH_PIPELINED of TanH is
   constant max_neg : signed((bit_width-1) downto 0) := to_signed(integer(-2**(bit_width-1)), bit_width);
+  constant neg_one : signed((bit_width-1) downto 0) := to_signed(integer(-1.0*2**(fractional_bits)), bit_width);
   
   constant a : signed((bit_width-1) downto 0) := to_signed(integer(5.5799959*(2**fractional_bits)), bit_width);
   constant b : signed((bit_width-1) downto 0) := to_signed(integer(3.02*(2**fractional_bits)), bit_width);
@@ -105,13 +107,16 @@ architecture PLATANH_PIPELINED of TanH is
   
   signal x, x_abs, x_shift_1, x_shift_2, x_shift_3, x_shift_4, x_shift_5, op_1, op_2, res, res_neg: signed((bit_width - 1) downto 0);
   signal sel: std_logic_vector(2 downto 0);
-  signal op1_reg, op2_reg, op1_next, op2_next, x_next, x_reg : signed((bit_width-1) downto 0); 
-  signal valid_out_reg, valid_out_next : std_logic;
+  signal op1_reg, op2_reg, op1_next, op2_next : signed((bit_width-1) downto 0); 
+  signal valid_out_reg, valid_out_next, x_neg_next, x_neg_reg, x_max_next, x_max_reg : std_logic := '0';
 begin
   x <= input;
   x_abs <= abs(input);
   valid_out_next <= valid_in;
   valid_out <= valid_out_reg;
+  x_neg_next <= std_logic(x(bit_width-1));
+  x_max_next <= '1' when (x = max_neg) else
+                '0';
   
   sel <= "000" when x_abs >= a else	
 		 "001" when x_abs >= b else 
@@ -151,8 +156,8 @@ begin
   res     <= op1_reg + op2_reg;
   res_neg <= -op1_reg - op2_reg;
   
-  output <= (others => '0') when (x = max_neg) else
-			res_neg when x(bit_width-1) = '1'else
+  output <= neg_one when x_max_reg = '1' else
+			res_neg when x_neg_reg = '1'else
 			res;
 			
   seq: process(clk)
@@ -161,6 +166,8 @@ begin
         op1_reg <= op1_next;
 	    op2_reg <= op2_next;
 	    valid_out_reg <= valid_out_next;
+		x_max_reg <= x_max_next;
+		x_neg_reg <= x_neg_next;
 	 end if;
   end process;
 end PLATANH_PIPELINED;
