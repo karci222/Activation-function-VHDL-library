@@ -5,6 +5,14 @@ Currently working and tested implementations are of Sigmoid and TanH activation 
 
 ****
 
+The library currently implements TanH and Sigmoid activation functions, using a so-called PLAN and PLATANH methods. They are
+proposed in following works:
+
+* PLAN https://digital-library.theiet.org/content/journals/10.1049/ip-cds_19971587
+* PLATanH Proposed in https://ieeexplore.ieee.org/abstract/document/8050805
+
+****
+
 ### Repo structure
 ```
 ELU
